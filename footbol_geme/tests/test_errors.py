@@ -62,34 +62,42 @@ class TestCustomErrors:
 
 class TestErrorHandling:
     """Тесты для обработки ошибок в игровых компонентах."""
-    
+
     def test_manager_reset_game_error(self):
         """Тест обработки ошибок при сбросе игры."""
-        manager = GameStateManager()
-        # Это должно работать без ошибок
+        pygame.init()
         try:
-            manager.reset_game()
-            assert manager.player is not None
-            assert manager.bot is not None
-            assert manager.ball is not None
-        except EntityError:
-            pytest.fail("Не должно быть ошибки при нормальном сбросе игры")
-    
+            manager = GameStateManager()
+            # Это должно работать без ошибок
+            try:
+                manager.reset_game()
+                assert manager.player is not None
+                assert manager.bot is not None
+                assert manager.ball is not None
+            except EntityError:
+                pytest.fail("Не должно быть ошибки при нормальном сбросе игры")
+        finally:
+            pygame.quit()
+
     def test_manager_update_without_objects(self):
         """Тест обработки обновления без инициализированных объектов."""
-        manager = GameStateManager()
-        # Не вызываем reset_game, объекты не инициализированы
-        
-        # В состоянии MENU не должно быть ошибки
+        pygame.init()
         try:
-            manager.update(1.0)
-        except EntityError:
-            pytest.fail("Не должно быть ошибки в состоянии MENU")
-        
-        # Но если перейти в PLAYING без инициализации - должна быть ошибка
-        manager.state = manager.state.__class__.PLAYING
-        with pytest.raises(EntityError):
-            manager.update(1.0)
+            manager = GameStateManager()
+            # Не вызываем reset_game, объекты не инициализированы
+
+            # В состоянии MENU не должно быть ошибки
+            try:
+                manager.update(1.0)
+            except EntityError:
+                pytest.fail("Не должно быть ошибки в состоянии MENU")
+
+            # Но если перейти в PLAYING без инициализации - должна быть ошибка
+            manager.state = manager.state.__class__.PLAYING
+            with pytest.raises(EntityError):
+                manager.update(1.0)
+        finally:
+            pygame.quit()
 
 
 

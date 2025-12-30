@@ -71,7 +71,8 @@ class TestBall:
         ball = Ball(Vector2(100, 100))
         ball.vel = Vector2(100, 100)  # Очень большая скорость
         ball.update(1.0)
-        assert ball.vel.length() <= settings.BALL_MAX_SPEED
+        # Используем pytest.approx для учета погрешности вычислений с плавающей точкой
+        assert ball.vel.length() <= settings.BALL_MAX_SPEED + 1e-10
     
     def test_ball_draw(self):
         """Тест отрисовки мяча (проверка отсутствия ошибок)."""
@@ -135,10 +136,20 @@ class TestPlayer:
     
     def test_player_max_speed_limit(self):
         """Тест ограничения максимальной скорости игрока."""
-        player = Player(Vector2(100, 100))
-        player.vel = Vector2(100, 100)  # Очень большая скорость
-        player.handle_input({})  # Пустой ввод, но трение применится
-        assert player.vel.length() <= settings.PLAYER_MAX_SPEED
+        pygame.init()
+        try:
+            player = Player(Vector2(100, 100))
+            player.vel = Vector2(100, 100)  # Очень большая скорость
+            # Создаем мок клавиш, который возвращает False для всех клавиш
+            class MockKeysEmpty:
+                def __getitem__(self, key):
+                    return False
+
+            keys = MockKeysEmpty()
+            player.handle_input(keys)  # Пустой ввод, но трение применится
+            assert player.vel.length() <= settings.PLAYER_MAX_SPEED
+        finally:
+            pygame.quit()
     
     def test_player_get_direction(self):
         """Тест получения направления взгляда игрока."""

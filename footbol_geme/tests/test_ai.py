@@ -35,15 +35,17 @@ class TestBot:
     
     def test_bot_state_defense(self):
         """Тест перехода в состояние защиты."""
+        # Бот на правой стороне поля
         bot = Bot(Vector2(settings.SCREEN_WIDTH * 0.75, settings.SCREEN_HEIGHT // 2))
         player = Player(Vector2(settings.SCREEN_WIDTH * 0.25, settings.SCREEN_HEIGHT // 2))
-        ball = Ball(Vector2(settings.SCREEN_WIDTH * 0.7, settings.SCREEN_HEIGHT // 2))  # На стороне игрока
-        
+        # Мяч на стороне игрока (слева от центра) - бот должен защищаться
+        ball = Ball(Vector2(settings.SCREEN_WIDTH * 0.3, settings.SCREEN_HEIGHT // 2))
+
         field_center = settings.SCREEN_WIDTH // 2
         bot.update_ai(ball, player, settings.GOAL_LEFT_X, settings.GOAL_RIGHT_X)
-        
-        # Если мяч на стороне игрока, должен быть DEFENSE
-        if ball.pos.x > field_center:
+
+        # Мяч слева от центра (на стороне игрока), бот справа -> режим DEFENSE
+        if ball.pos.x < field_center:
             assert bot.state == State.DEFENSE
     
     def test_bot_kick_cooldown(self):
