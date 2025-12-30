@@ -113,7 +113,7 @@ pytest --cov=src --cov-report=html
 run_tests.bat
 ```
 
-Подробнее о тестах: [tests/README.md](footbol mein/tests/README.md)
+Подробнее о тестах: [tests/README.md](footbol_geme/tests/README.md)
 
 ## Обработка ошибок и логирование
 
